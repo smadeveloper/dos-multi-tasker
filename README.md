@@ -57,9 +57,6 @@ gcc -Wall -O2 -g -o multitask.exe main.c main.S
 
 ```
 
-## Running
-
-Run multitask.exe in a DOS environment (real DOS, DOSBox, FreeDOS, or Windows 9x DOS prompt).
 =============================================
   DJGPP Multitasker - All Features Demo
 =============================================
