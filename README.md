@@ -41,40 +41,8 @@ A fully-featured cooperative and preemptive multitasking kernel for 32-bit DOS p
 - Per-window cursor tracking, automatic scrolling, and printf-style formatted output
 - Each task can own its own window for isolated visual output
 
-## Architecture
-IRQ0 (18.2 Hz PIT)
-│
-▼
-timer_handler ──→ tick++ (minimal ISR, just increments counter)
-│
-▼
-task_check_preempt() ◄── called from busy loops
-│
-_task_housekeeping()
-┌──────┴──────┐
-wake_sleepers pq_process
-│
-priority countdown
-│
-task_yield()
-save ctx ──→ find next ready ──→ restore ctx
 
 
-All context switching happens at user level — the timer ISR only sets a flag. This avoids the complexity and fragility of switching stacks inside an interrupt handler under DPMI.
-
-### Context Frame (saved on task stack)
-High address
-┌────────────────┐
-│ arg            │ ← parameter to task function
-│ func           │ ← task entry point
-│ task_wrapper   │ ← initial return address
-│ EAX..EDI       │ ← pushal (8 registers)
-│ DS, ES, FS, GS │ ← segment registers
-│ EFLAGS         │
-│ FPU state      │ ← 108 bytes (fnsave/frstor)
-└────────────────┘
-Low address ← stack_ptr points here
-[DEADBEEF guard] ← stack overflow sentinel
 
 ## Building
 
@@ -86,7 +54,10 @@ make
 
 # Or manually
 gcc -Wall -O2 -g -o multitask.exe main.c main.S
-Running
+
+```
+
+## Running
 
 Run multitask.exe in a DOS environment (real DOS, DOSBox, FreeDOS, or Windows 9x DOS prompt).
 =============================================
@@ -108,8 +79,8 @@ Run multitask.exe in a DOS environment (real DOS, DOSBox, FreeDOS, or Windows 9x
  D. Stack Guard
  E. VGA Text UI
  F. EVERYTHING
-Demo Descriptions
-Key	Demo	What It Shows
+
+## Demo Descriptions
 1	Preemptive	4 infinite-loop tasks preempted by timer ticks
 2	Cooperative	4 tasks that voluntarily yield and then exit
 3	Semaphore	Producer/consumer pattern with counting semaphore
@@ -126,7 +97,7 @@ D	Stack Guard	Stack overflow detection via sentinel checks
 E	VGA Text UI	4 colored windows with independent scrolling output
 F	Everything	All of the above running simultaneously
 
-API Reference
+## API Reference
 Initialization & Task Management
 
 C
